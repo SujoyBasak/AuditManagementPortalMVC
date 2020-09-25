@@ -43,7 +43,7 @@ namespace AuditManagementPortalMVC.Controllers
                 return View("Home");        
 
             }
-            ViewBag.Message = "Wrong Credentials";
+            ViewBag.Message = "Invalid Name or Password";
             return View("Login");
             
 
