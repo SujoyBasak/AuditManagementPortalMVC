@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "CcebONnsPq6a+HYJcUe1Bn80ohWErKN5xwObwsYXugvIqXlCW3uHV3GLv8Rw7KdwfdU3aySSdT/6KN9aRWsyiw==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Sujoy Basak\\source\\repos\\AuditManagementPortalMVC\\AuditManagementPortalMVC.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Sujoy Basak\\.nuget\\packages\\microsoft.visualstudio.azure.containers.tools.targets\\1.10.8\\microsoft.visualstudio.azure.containers.tools.targets.1.10.8.nupkg.sha512",
+    "C:\\Users\\Sujoy Basak\\.nuget\\packages\\newtonsoft.json\\12.0.3\\newtonsoft.json.12.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}
