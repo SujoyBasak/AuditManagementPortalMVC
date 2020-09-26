@@ -124,12 +124,29 @@ namespace AuditManagementPortalMVC.Controllers
                 return View("Login");
             }
             SeverityController con = new SeverityController();
-            AuditResponse ls = new AuditResponse();
+            AuditResponse ls = new AuditResponse();            
             ls = con.Index(questions,Token);
+
+            Storage obj = new Storage();
+            obj.add(ls);
 
             return View(ls);
             
         }
+        public IActionResult History()
+        {
+            string Token = HttpContext.Request.Cookies["Token"];
+            if (string.IsNullOrEmpty(Token))
+            {
+                ViewBag.Message = "Please Login";
+                return View("Login");
+            }
+            Storage con = new Storage();
+            List<AuditResponse> ls = new List<AuditResponse>();
+            ls=con.returnBack();
+            return View(ls);
+        }
+        
 
         [HttpGet]
         public IActionResult SOX(AuditRequest req)
@@ -154,6 +171,9 @@ namespace AuditManagementPortalMVC.Controllers
             SeverityController con = new SeverityController();
             AuditResponse ls = new AuditResponse();
             ls = con.Index1(questions,Token);
+
+            Storage obj = new Storage();
+            obj.add(ls);
 
             return View(ls);
 
