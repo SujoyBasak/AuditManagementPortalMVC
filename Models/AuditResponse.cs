@@ -8,6 +8,7 @@ namespace AuditManagementPortalMVC.Models
 {
     public class AuditResponse
     {
+        [Key]
         [Display(Name ="Audit Id: ")]
         public int AuditId { get; set; }
         [Display(Name = "Project Execution Status: ")]

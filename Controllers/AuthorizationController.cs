@@ -6,19 +6,24 @@ using System.Text;
 using System.Threading.Tasks;
 using AuditManagementPortalMVC.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 
 namespace AuditManagementPortalMVC.Controllers
 {
     public class AuthorizationController : Controller
     {
-        Uri baseAddress = new Uri("https://localhost:44311/api");   //Port No.
+        Uri baseAddress;       //44311
         HttpClient client;
-
-        public AuthorizationController()
+        AuditContext context;
+        IConfiguration config;
+        public AuthorizationController(AuditContext _context,IConfiguration _config)
         {
+            config = _config;
+            baseAddress = new Uri(config["Links:Auth"]);
             client = new HttpClient();
             client.BaseAddress = baseAddress;
+            context = _context;
 
         }
 
@@ -69,11 +74,10 @@ namespace AuditManagementPortalMVC.Controllers
                 ViewBag.Message = "Please Login";
                 return View("Login");
             }
-            ChecklistController con = new ChecklistController();
-            List<ChecklistQuestions> ls = new List<ChecklistQuestions>();
-            ls = con.Index(audittype.Type,Token);       // Change Here 
-
-            return View(ls);
+            ChecklistController objOfChecklistController = new ChecklistController(config);
+            List<ChecklistQuestions> listOfQuestions = new List<ChecklistQuestions>();
+            listOfQuestions = objOfChecklistController.Index(audittype.Type,Token);       
+            return View(listOfQuestions);
         }
         [HttpPost]
         public IActionResult AuditForm()
@@ -87,7 +91,7 @@ namespace AuditManagementPortalMVC.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult Severity(AuditRequest req)
+        public IActionResult Severity(AuditRequest request)
         {
             string Token = HttpContext.Request.Cookies["Token"];
             if (string.IsNullOrEmpty(Token))
@@ -95,16 +99,16 @@ namespace AuditManagementPortalMVC.Controllers
                 ViewBag.Message = "Please Login";
                 return View("Login");
             }
-            if (req.Auditdetails.Type == "Internal")
-                return RedirectToAction("Internal",req);
-            else if (req.Auditdetails.Type == "SOX")
-                return RedirectToAction("SOX",req);
+            if (request.Auditdetails.Type == "Internal")
+                return RedirectToAction("Internal");    
+            else if (request.Auditdetails.Type == "SOX")
+                return RedirectToAction("SOX");
             return View();
 
             
         }
         [HttpGet]
-        public IActionResult Internal(AuditRequest req)
+        public IActionResult Internal()
         {
             string Token = HttpContext.Request.Cookies["Token"];
             if (string.IsNullOrEmpty(Token))
@@ -123,14 +127,16 @@ namespace AuditManagementPortalMVC.Controllers
                 ViewBag.Message = "Please Login";
                 return View("Login");
             }
-            SeverityController con = new SeverityController();
-            AuditResponse ls = new AuditResponse();            
-            ls = con.Index(questions,Token);
+            SeverityController objofSeverityController = new SeverityController(config);
+            AuditResponse auditResponse = new AuditResponse();
+            auditResponse = objofSeverityController.Index(questions,Token);
 
             Storage obj = new Storage();
-            obj.add(ls);
+            obj.add(auditResponse);
+            context.AuditResponse.Add(auditResponse);
+            context.SaveChanges();
 
-            return View(ls);
+            return View(auditResponse);
             
         }
         public IActionResult History()
@@ -141,15 +147,15 @@ namespace AuditManagementPortalMVC.Controllers
                 ViewBag.Message = "Please Login";
                 return View("Login");
             }
-            Storage con = new Storage();
-            List<AuditResponse> ls = new List<AuditResponse>();
-            ls=con.returnBack();
-            return View(ls);
+            Storage objOfStorage = new Storage();
+            List<AuditResponse> listOfResponse = new List<AuditResponse>();
+            listOfResponse = objOfStorage.returnBack();
+            return View(listOfResponse);
         }
         
 
         [HttpGet]
-        public IActionResult SOX(AuditRequest req)
+        public IActionResult SOX()
         {
             string Token = HttpContext.Request.Cookies["Token"];
             if (string.IsNullOrEmpty(Token))
@@ -168,14 +174,16 @@ namespace AuditManagementPortalMVC.Controllers
                 ViewBag.Message = "Please Login";
                 return View("Login");
             }
-            SeverityController con = new SeverityController();
-            AuditResponse ls = new AuditResponse();
-            ls = con.Index1(questions,Token);
+            SeverityController objofSeverityController = new SeverityController(config);
+            AuditResponse auditResponse = new AuditResponse();
+            auditResponse = objofSeverityController.Index1(questions,Token);
 
-            Storage obj = new Storage();
-            obj.add(ls);
+            Storage objOfStorage = new Storage();
+            objOfStorage.add(auditResponse);
+            context.AuditResponse.Add(auditResponse);
+            context.SaveChanges();
 
-            return View(ls);
+            return View(auditResponse);
 
         }
         [HttpGet]
