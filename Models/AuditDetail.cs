@@ -9,17 +9,13 @@ namespace AuditManagementPortalMVC.Models
     public class AuditDetail
     {
         [Required]
-        [Display(Name ="Type(Internal/SOX)")]
-        public string Type { get; set; }        //Change
+        [Display(Name ="Audit Type")]
+        public string Type { get; set; }        
         [Required]        
         public DateTime Date { get; set; }
         public Questions questions { get; set; }
 
 
-        //public enum AuditType
-        //{
-        //    "Internal",
-        //    "SOX"
-        //};
+        
     }
 }

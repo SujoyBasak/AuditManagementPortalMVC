@@ -2,7 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AuditManagementPortalMVC.Controllers;
 using AuditManagementPortalMVC.Models;
+using AuditManagementPortalMVC.Providers;
+using AuditManagementPortalMVC.Repository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -11,6 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace AuditManagementPortalMVC
 {
@@ -29,11 +33,17 @@ namespace AuditManagementPortalMVC
             services.AddControllersWithViews();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddDbContext<AuditContext>(options => options.UseSqlServer(Configuration.GetConnectionString("conStr")));
+
+            services.AddScoped<IChecklistProvider, ChecklistProvider>();
+            services.AddScoped<IChecklistRepo, ChecklistRepo>();
+            services.AddScoped<ISeverityProvider, SeverityProvider>();
+            services.AddScoped<ISeverityRepo, SeverityRepo>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
+            loggerFactory.AddLog4Net();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -55,7 +65,7 @@ namespace AuditManagementPortalMVC
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Authorization}/{action=Login}/{id?}");
+                    pattern: "{controller=Portal}/{action=Login}/{id?}");
             });
         }
     }
